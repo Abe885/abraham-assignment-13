@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import com.coderscampus.assignment13.domain.Address;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,6 +50,10 @@ public class UserService {
 		Optional<User> userOpt = userRepo.findById(userId);
 		return userOpt.orElse(new User());
 	}
+	public User findByIdAccounts(Long userId) {
+		Optional<User> userOpt = userRepo.findById(userId);
+		return userOpt.orElse(new User());
+	}
 
 	public User saveUser(User user) {
 		if (user.getUserId() == null) {
@@ -63,6 +68,18 @@ public class UserService {
 			user.getAccounts().add(savings);
 			accountRepo.save(checking);
 			accountRepo.save(savings);
+		}
+		if (user.getAddress() == null) {
+			Address address = new Address();
+			address.setAddressLine1("N/A");
+			address.setAddressLine2("N/A");
+			address.setRegion("N/A");
+			address.setCity("N/A");
+			address.setCountry("N/A");
+			address.setZipCode("N/A");
+			address.setUser(user);
+			address.setUserId(user.getUserId());
+			user.setAddress(address);
 		}
 		return userRepo.save(user);
 	}
