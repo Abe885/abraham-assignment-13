@@ -34,7 +34,7 @@ public class UserController {
     public String postCreateUser(User user) {
         System.out.println(user);
         userService.saveUser(user);
-        return "redirect:/register";
+        return "redirect:/users";
     }
 
     @GetMapping("/users")
@@ -51,26 +51,38 @@ public class UserController {
 
     @GetMapping("/users/{userId}")
     public String getOneUser(ModelMap model, @PathVariable Long userId) {
-        User user = userService.findById(userId);
+        User user = userService.findByIdAccounts(userId);
+        if (user.getAddress() == null) {
+            Address address = new Address();
+            address.setUser(user);
+            address.setUserId(userId);
+            user.setAddress(address);
+        }
         model.put("users", Arrays.asList(user));
         model.put("user", user);
+        model.put("address", user.getAddress());
+
         return "users";
     }
 
     @PostMapping("/users/{userId}")
-    public String postOneUser(User user, @PathVariable Long userId, Address address) {
-
+    public String postOneUser(User user, @PathVariable Long userId) {
         User currentUser = userService.findByIdAccounts(userId);
+
+        if (user.getPassword() == null || user.getPassword().isEmpty()) {
+            user.setPassword(currentUser.getPassword());
+        }
+
         user.setAccounts(currentUser.getAccounts());
-        address = addressService.saveAddress(user.getAddress());
+        Address address = addressService.saveAddress(user.getAddress());
         user.setAddress(address);
-        user.setAccounts(currentUser.getAccounts());
         userService.saveUser(user);
-        return "redirect:/users/" + user.getUserId();
+
+        return "redirect:/users/"+user.getUserId();
     }
 
     @PostMapping("/users/{userId}/delete")
-    public String deleteOneUser(@PathVariable Long userId) {
+    public String deleteOneUser(@PathVariable("userId") Long userId) {
         userService.delete(userId);
         return "redirect:/users";
     }
