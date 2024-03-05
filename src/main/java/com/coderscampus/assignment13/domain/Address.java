@@ -1,11 +1,6 @@
 package com.coderscampus.assignment13.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.MapsId;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 @Entity
 public class Address {
@@ -26,7 +21,7 @@ public class Address {
 		this.userId = userId;
 	}
 	
-	@OneToOne
+	@OneToOne(cascade= CascadeType.PERSIST)
 	@MapsId
 	@JoinColumn(name="user_id")
 	public User getUser() {
@@ -76,5 +71,21 @@ public class Address {
 	}
 	public void setZipCode(String zipCode) {
 		this.zipCode = zipCode;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Address other = (Address) obj;
+		if (userId == null) {
+			if (other.userId != null)
+				return false;
+		} else if (!userId.equals(other.userId))
+			return false;
+		return true;
 	}
 }
