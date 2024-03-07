@@ -15,9 +15,9 @@ public class AccountService {
     public Account save(Account account) {
         return accountRepo.save(account);
     }
-//    public void deleteAccount(Account account) {
-//        accountRepo.delete(account);
-//    }
+    public void deleteAccount(Account account) {
+        accountRepo.delete(account);
+    }
 
     public Account findById(Long accountId) {
         Optional<Account> accountOpt = accountRepo.findById(accountId);
